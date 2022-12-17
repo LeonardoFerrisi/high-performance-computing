@@ -45,3 +45,31 @@
 
 #
 
+## About
+The following is a collection of projects demonstrating Parallel Computing and Concepts in High Performance Computing
+
+## Projects
+
+### C Bootcamp
+
+### MPI
+
+#### MPI Collective
+
+#### MPI Advanced
+
+### TICTACTOE Parallel
+
+A demonstration of parallelizing a game-playing AI for TIC TAC TOE
+
+### OpenMP
+
+#### OpenMP Bootcamp
+
+#### OpenMP Advanced
+
+### Final Project
+
+A demonstration of parallelizing Prim's Algorithm and the Fourier Transform
+
+

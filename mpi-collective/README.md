@@ -1,85 +1,80 @@
-# <center> Week 3 Assignments</center>
+# MPI Collective
 
-# Hands-On: Vector Normalization
+#### A Summary: 
 
-### Targets
-
-- [ ] CP.1	C Programming (editing, compiling)
-- [ ] CP.2	C Debugging (your code, other's code)
-- [ ] PP.3	Parallelization of Serial Programs
-- [ ] MPI.2	Collective Communication (Broadcast, Scatter, Gather)
-
-## Setup: 
-
-* pull the class repo
-* copy `week-3-mpi-collective` into your own repo
-* add/commit/push the contents
-
-## Description 
-
-Following a lecture on collective communication protocols and the vector normalization task, implement parallelized vector norm.
-
-Let's first operate under the assumption that the size of the array is evenly divisible by the number of tasks (pick an even number).  
-
-Recall that vector normalization is $\frac{\hat{u}}{||u||}$
-
-Recall the algorithm is as follows:
-
-1. Generate vector on root (make sure N%p == 0)
-2. scatter vector  to all nodes
-3. all nodes calculate local sum-of-squares
-4. all nodes send local sum back to root, root receives
-5. root accumulates local sums, takes square root
-6. root broadcasts sqrt to nodes
-7. all nodes normalize their local vector
-8. all nodes gather back to root node
-
-In a file called `MPI_Normalize_Vector.c`, implement the normalization function.  You may use your Week 2 vector programs as starter code.
-
-* you should have separate arrays for the original and result vector
-* you can re-use the same array for `local-sum` and `local-norm`
-
-## Tests:
-
- you'll know it works if the magnitude of the normalized vector is 1.  The magnitude is calculated by taking the square root of the sum of squares of the vector.  
-
- ## Analysis:
-
-* calculate speedup for a range of vector sizes and tasks.  Use MPI timing code.
-
- ## Submit:
- *  add/commit/push your code and a `Writeup.md`
-
- ## Challenge: non-even slices
-
- Learn about `MPI_Scatterv`, and implement a version of vector normalization that works even when $N%P != 0$
-
----
-
-## Part 2: Even/Odd Transposition Sort
-
-Create a new file called `MPI_Sort.c` and implement the even/odd transposition algorithm discussed in lecture and in slides.  The algorithm is as follows:
-
-1. On the root node generate a very large array of values
-    * the size of the integer array should be passed in as an argument to the program via `argv`
-    * for testing purposes the random seed can also be passed in as an argument (seed `srand` with `time(NULL)` if no second argument is given).
-2. The root node should `scatter` slices of the array to all non-root nodes (Using scatter makes sure that root also gets a slice)
-3. All nodes should then sort their local slices.  You don't have to be fancy here.  I've provided example code that uses the standard `qsort()` algorithm. 
-4. Then the swapping/merging phases begin.  
-    * In each case, pairs of adjacent nodes send each other their entire sorted array.  So each node will need to allocate space for an `otherslice` array.  I recommend learning about `MPI_Sendrecv` for this, to make your life easier.  
-    * Once a node has both its slice and its neighbors slice, it needs to look through both arrays and keep exactly half of the items
-        * the lower-id node keeps the smaller items between the two merged lists
-        * the higher-id node keeps the larger items
-        * at the end of this process the "kept" values need to be back in the node's local slice.
-    * during the *even* phase, every even node pairs with the adjacent-higher odd node. (i.e. 0-1, 2-3, 4-5, etc)
-    * during the *odd* phase, every odd node pairs with the adjacent-higher even node (i.e. 1-2, 3-4, 5-6, etc)
-        * unpaired nodes do nothing.
-5. Everything should be sorted after `p` phases (where p is the number of tasks).  This makes sense: if there is 1 task, then the list is sorted after 0 swap-merges.  If there are two tasks, you'll need 1 swap merge.   With 3 tasks you may need 3. Etc. 
-6. When done, root node should `gather` the slices back to a big array.
+| Vector Size     | Number of Processes | Time Elapsed (s) |     Improvement       |
+|-----------------|:-------------------:|-----------------:|----------------------:|
+|    480000000    |          1          |     9.156834     |        baseline       |
+|    480000000    |          2          |     7.896937     |        1.259897       |
+|    480000000    |          3          | SEMENTATIONFAULT |           NA          |
+|    480000000    |          4          | SEMENTATIONFAULT |           NA          |
 
 
-### Writeup
+| Vector Size     | Number of Processes | Time Elapsed (s) |     Improvement       |
+|-----------------|:-------------------:|-----------------:|----------------------:|
+|    48000000     |          1          |     0.860943     |        baseline       |
+|    48000000     |          2          |     0.757006     |          0.0039       |
+|    48000000     |          3          |     0.717847     |          0.0448       |
+|    48000000     |          4          |     0.673024     |         -0.1942       |
+|    48000000     |          8          |     0.867176     |                  |
 
-Your writeup should provide nicely formatted markdown tables, with rows corresponding to various array sizes, and columns corresponding to number of processses.  Your writeup should also describe how your algorithm works, and provide some written analysis of why there is or is not speedup.
- 
- 
+
+| Vector Size     | Number of Processes | Time Elapsed (s) |     Improvement       |
+|-----------------|:-------------------:|-----------------:|----------------------:|
+|    4800000      |          1          |     0.088547     |        baseline       |
+|    4800000      |          2          |     0.071261     |           0.103       |
+|    4800000      |          3          |     0.075080     |          -0.018  |
+|    4800000      |          5          |     0.093503     |          0.0169  |
+|    4800000      |          6          |     0.076627     |                  |
+
+
+# =====================
+# Revisions
+# =====================
+
+#### vector_normalization.c
+
+- Previously, this file had a severe segmentation fault issue. After some copius amounts of debugging, I located the source as the MPI_Gather on line 159.
+  After some research on the syntax for MPI_Gather, I narrowed the issue down to me gathering with a size specification of the full vectorSize rather than
+  gathering myVectorSliceSize elements from each node. This fixed the issue there - however there was another bug
+- The global magnitude had been (for debugging purposes) set to the square root of the first element of the global mag. It should have been set to the square root
+  of the total sum which I adjusted allowing this code to truly normalize based off of an acutal global magnitude.
+- VERBOSE is now a 0 or 1 argument which can be based in as a 3rd argument following arraySize and seed
+
+- *IMPROVED TABLE*
+
+| Vector Size     | Number of Processes | Time Elapsed (s) |         Speedup       |
+|-----------------|:-------------------:|-----------------:|--------------------------:|
+|    48000000     |          1          |     1.428672     |        baseline           | 
+|    48000000     |          2          |     1.334880     |        1.07 or 7%         | (1.42../1.33..) 
+|    48000000     |          3          |     1.294856     |        1.03 or 3%         | (1.33../ 1.29..)
+|    48000000     |          4          |     1.317408     |        0.98 or -1.7%      | (1.29../ 1.31..)
+
+#### MPI_Sort.c
+
+- Previously, this file was unable to perform a standard sort due to some issues I was having with understanding the MPI_SendRecv function. The original file would always result in the programming hanging on a process that never finished. This was in part due to the error where I only called SendRecv on even nodes for the 'even' phase, this resulted in the odd nodes supposed to be involved in the process never being utilized. The updated code calls sendRecv in both odd and even nodes for both phases, but with properely adjusted parameter such that each node gets and gives the data they should during the appropriate phase.
+
+# ======================
+# Revision II
+# ======================
+
+## Additional tables for: MPI_Sort.c
+
+| Vector Size     | Number of Processes | Time Elapsed (s) |         Speedup       |
+|-----------------|:-------------------:|-----------------:|--------------------------:|
+|    48000000     |          1          |     5.207705     |        baseline           | 
+|    48000000     |          2          |     2.867772     |        1.82 or 82%         | (5.21../2.86..) 
+|    48000000     |          3          |     2.423835     |        1.18 or 18%         | (2.87../ 2.42..)
+|    48000000     |          4          |     2.058654     |        1.17 or 17%      | (2.42../ 2.06..)
+
+| Vector Size     | Number of Processes | Time Elapsed (s) |         Speedup       |
+|-----------------|:-------------------:|-----------------:|--------------------------:|
+|    64000000     |          1          |     7.199282     |        baseline           | 
+|    64000000     |          2          |     3.914935     |        1.84 or 84%         | (7.20../3.91..) 
+|    64000000     |          4          |     2.544084     |        1.54 or 54%      | (7.20../ 2.54..)
+
+| Vector Size     | Number of Processes | Time Elapsed (s) |         Speedup       |
+|-----------------|:-------------------:|-----------------:|--------------------------:|
+|    148000000     |          1          |     16.802135    |        baseline           | 
+|    148000000     |          2          |     9.284435     |        1.81 or 81%         | (16.80../9.28..) 
+|    148000000     |          4          |     5.798738     |        1.60 or 60%      | (9.28../ 5.80..)

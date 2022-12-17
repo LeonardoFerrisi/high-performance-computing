@@ -1,7 +1,7 @@
 # Final Project
 
 ## Leonardo Ferrisi 23'
-## Talha Mustaq 23'
+## [Talha Mustaq 23'](https://github.com/talhamushtaq8)
 
 # Concept:
 

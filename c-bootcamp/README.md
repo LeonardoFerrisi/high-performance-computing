@@ -1,238 +1,87 @@
-<center>CSC333 C Bootcamp assignments</center>
-
-<!-- TOC -->
-
-- [C BootCamp](#c-bootcamp)
-  - [Description](#description)
-  - [Task Overview](#task-overview)
-  - [Targets](#targets)
-- [Setup](#setup)
-  - [* I am assuming a basic knowledge of the UNIX Command line.  If you are new to the command line, I'll be around to help you in class.  You may also find this Unix Command Line Cheat Sheet useful](#-i-am-assuming-a-basic-knowledge-of-the-unix-command-line--if-you-are-new-to-the-command-line-ill-be-around-to-help-you-in-class--you-may-also-find-this-unix-command-line-cheat-sheet-useful)
-- [Getting Started](#getting-started)
-  - [Cloning the repositories.](#cloning-the-repositories)
-  - [Compiling and running the code](#compiling-and-running-the-code)
-- [Assignment 1: Modifying factors (Try to do before Friday)](#assignment-1-modifying-factors-try-to-do-before-friday)
-  - [Submit](#submit)
-- [Assignment 2:](#assignment-2)
-  - [Setup:](#setup-1)
-  - [Description](#description-1)
-  - [Submit](#submit-1)
-- [Assignment 3: Linked Lists (Challenge)](#assignment-3-linked-lists-challenge)
-  - [Setup](#setup-2)
-  - [Description](#description-2)
-  - [Submit](#submit-2)
+<center>Leonardo Ferrisi</center>
 
-<!-- /TOC -->
-# C BootCamp
+# Task List
+- [X] Factorization
+- [X] Vectors and Pointers
+- [X] Linked List in C
 
-## Description
+# Assignment 1
 
-The goals of this in-class assignment are as follows:
+### Initial change (Step 3): 
+- break removed, iterates up to number value
+- prints if number is prime
+- A number like 3,000,000 takes roughly 19.5 ms to run, 95 divisors are found, is not prime
 
-* introduce you to git, gitlab, and how we'll be using it in this class
-* introduce you to C programming, including editing, compiling and debugging code
-* introduce you to writing Markdown documents
+**times = (19.500420, 23.257700, 19.244500, 19.524000)**
 
-The assignments include:
-* A fun little brute-force algorithm (although, as it turns out, much too simple) for factorization.
-* A larger vector-multiplication algorithm, to get you used to operating on arrays of data.
-* A linked list algorithm to get you *really* used to pointers
+- A number like 3,456,789,101 takes roughly 19060 ms to run (around 19 seconds), 2 divisors are found, is not prime
 
-## Task Overview
+**times = (19060, 13733)**
 
-(check these off as you complete them, but putting an x in the box)
 
-- [X] Complete Setup (clone repos)
-- [X] Assignment 1: Factorization
-- [X] Assignment 2: Vectors and Pointers 
-- [X] Assignment 3: Linked List
+### Secondary change (Step 4):
+- for loop increments by two instead of 1 now
+- loop breaks if a square root is found
 
-## Targets
+- A number like 99980001 takes roughly 0.233 ms before a square root of 9999 is reached. 22 divisors are found, is not prime
 
-- [ ] CL.1	Navigate the command line interface 
-- [ ] CL.2	create/move/delete files and folders
-- [ ] CL.3	SSH and SSH keys
-	
-- [ ] G.1	create/pull repository
-- [ ] G.2	commit and push to a repository
-- [ ] G.4	Markdown
-	
-- [ ] CP.1	C Programming (editing, compiling)
-- [ ] CP.2	C Debugging (your code, other's code)
-- [ ] CP.5	Memory Management (Allocation and Segmentation Faults)
+- A number like 15241383936 takes roughly 60658 ms to run, (roughly 60 seconds) and does have a square root but this square root is even, so it is never hit - 8 divisors are found, is not prime
 
-# Setup
+- A number like 3890609 takes roughly 20.61 ms to run. it does have a square root but square root not a whole number thus is never reached. 0 divisors are found, is prime
 
-What you'll need for this assignment:
+**times = (20.61, 20.78, 24.11, 23.73, 21.71, 22.27)**
 
-* a terminal app (Terminal on MacOS or puTTY on windows)
-* git installed on your computer (via XTools on MacOS, or GitBash on Windows)
-* ssh installed on your computer (pre-installed on MacOS and I think on Windows?)
-* I am assuming a basic knowledge of the UNIX Command line.  If you are new to the command line, I'll be around to help you in class.  You may also find [this Unix Command Line Cheat Sheet useful](https://files.fosswire.com/2007/08/fwunixref.pdf)
----
-# Getting Started
 
-1. Log into slack
-2. Log into cs-gitlab.union.edu.  If 
-3. On the machine you're using (I'll call this your *development machine*):
-   * create a CSC333 folder or directory in the location of your choice.
-4. If you already have an ssh keypair generated on your development machine, skip this step.  Otherwise, generate one using the steps provided in my [tutorial](https://cs-gitlab.union.edu/rieffelj/tutorials/-/tree/main/ssh-keys)
-5. Add you SSH public key to your gitlab profile (if it isn't there already)
-under your profile icon (top right), select "Settings", then "SSH Keys"
+|  number |    time elapsed  (ms)   |     num divisors     |
+|--------|---------|----------|
+|    20    |     0.076000    |     2     |
+|   28409    |     0.173000    |     0     |
+|    7238    |     0.105000    |     7     |
+|    217351    |     0.882000    |      0    |
+|    2162351    |     7.849000    |      0    |
+|    21623581    |     77.625000    |      2    |
 
----
 
-## Cloning the repositories.
+# Assignment 2
 
-You'll be using two repositories in this course.
-   * `csc333-labs-n-demos` (read only) - this is where I'll post lab assignments and starter code
-   * `username-csc333` - your personal repository
+##### (Step 4):
+    - When adding a larger size than the actual size of the vector the randomizer gets random doubles as many times as the input size, but the
+        print_vector functions still print out the SIZE amount... unless they 
+        are given a larger parameter too, in which case it begins giving the values of the next vector
+    - It must be accessing the memory addresses of the next vector since it thinks the size of itself is larger!
+    - If the calloc sizes are the same as SIZE, but the randomize is larger, it begins randomizing in the area of memory associated with the next vector (of course when the randomize vector is called for the next vector, those locations are randomized again)
 
- From your CSC33 Folder or directory on your development machine:
+##### (Step 7):
+    - Increasing the size by 10 times
+    - Up until 10^6 time in ms is still under 100ms runtime
+    - At 10^7 runtime is 384 ms
+    - At 10^8 runtime is 3847 ms
+    - At 10^9 runtime runs for a while and then shows the message 'killed'
 
-`git clone git@cs-gitlab.union.edu:rieffelj/csc333-labs-n-demos.git`
+*timing, using seed of 1234* 
 
-(if you're asked for a password, or get an error, then return to the step about SSH keys above.)
+**For two vectors, using four took an eternity?**
 
-You'll see an `week-1-c-bootcamp` directory in there.  Next, clone your personal csc333-<username> project.  This should involve something like this:
- 
-`git clone git@cs-gitlab.union.edu:username/username-csc333-s21.git` (except with your username)
+|     vector size      |     time (ms)       |
+|-----------|------------|
+|    10^2      |      1.093000      |
+|    10^5      |      1114.095000      |
+|    10^6      |      10013.476000      |
+|    10^7      |      12326.159000      |
 
-Next, perform the following steps:
+# Assignment 3
 
-```
-cd username-csc333-s21
-touch README.md
-git add README.md
-git commit -m "add README"
-git push -u origin master
-```
+##### (Step 2):
+    - The algorithm for a recursive print is pretty simple:
+    1. print the data of the current node
+    2. If the next node is not NULL, PrintList that node
+    3. If the next node *is* NULL, print '->NULL'
+    - Works great... yay!
 
-Great! Now move (via  `cp -R` or drag-and-drop) the `week-1-c-bootcamp` directory from the class repo into your personal repo, and add the files to your repository:
-
-```
-cd week-1-c-bootcamp
-git add factors.c
-```
-
----
-
-## Compiling and running the code
-
-We don't use no stinkin IDEs in this class.  We will be working from the command line!
-
-Try compiling the code:
-
-`gcc factors.c`
-
-And running it:
-
-`./a.out`
-
-Neato!  You may, of course, want to give the executable a different name.  You can do this with the `-o` flag:
-
-`gcc factors.c -o factors`
-
----
-# Assignment 1: Modifying factors (Try to do before Friday) 
-
-
-First,  modify the [Writeup Markdown](Writeup.md) in the repo to reflect your name.  
-
-Now that that's out of the way, make the following changes to the code to turn it into a variation of a brute force prime-number tester.  This is a contrived problem just to give you a chance to sharpen your c programming skills and play with numbers big enough to produce longer-running programs.
-
-1. Look at the code to understand what is happening
-2. try picking other big numbers, and find their factor
-3. change the code by:
-   1. code should return count of all the divisors (don't break)
-   2. print if the number is prime or not
-   3. Take some timing, and make a note of them down in your Writeup.
-4. Now improve the code by:
-   1.  incrementing by 2 instead of 1
-   2.  stopping as soon as you reach the square root of the number.
-   3. Take some timing rudimentary timing, make a note in your Writeup
-You may need to add the line `#include <math.h>` at the top of your program, and then you'll need to compile with the `-lm` flag
-
-`gcc factors.c -o factors -lm`
-
-## Submit
-
-Commit and push to your repo:
-
-*  Your `Writeup.md`,  containing
-   * data from steps 3 and 4 above 
-   * an explanation of why you might get different time values for the same number
-*  Your `factors.c`
-
----
-# Assignment 2: 
-
-- [x] Step 1
-- [x] Step 2
-- [x] Step 3
-- [x] Step 4
-- [x] Step 5
-- [x] Step 6
-- [x] Step 7
-
-## Setup:
-
-* Be sure to add/commit/push your personal repo
-
-## Description 
-
-Now take a look at `vectors.c`, which provides some rudimentary functions to generate random vectors of a given size.    The program takes up to two arguments, the first is the size of the vector, and the second is the random seed (so you can test your code better with a fixed seed);
-
-1. Read and understand how `argc` and `argv` work
-2. Read and understand the structure of the normal and the pointer-based vector   functions.
-3. Write and test a pointer-based version of `randomize_vector` named `randomize_vector_p`
-4. What happens if you mess up the vector size argument and make it bigger than the actual size of the vector? Modify the calls to randomize and print to find out what happens in each case. Make a note in your writeup.
-5. Write and test a vector addition function that, given two vectors of the same size, creates a new vector (via calloc) that is the index-wide sum of the two argument vectors.  This function *must* use pointers instead of array indexing.
-6. Write and test a vector dot product function that, given two vectors, returns a double that is the vector dot product of the two vectors.
-7. Add the timing code from `factors.c` to `vectors.c` and play around with the size of the vectors you're using in the code.  How big can you make them? Does the code ever get slow?  Make a note of your observations in your writeup.
-
-## Submit 
-
-Commit and push to your repo:
-* Your updated `Writeup.md` containing:
-   * your observations from above.
-* Your `vectors.c`
-
----
-# Assignment 3: Linked Lists (Challenge)
-
-## Setup
-
-* Be sure to add/commit/push your personal repo
-
-## Description
-
-The purpose of this assignment is to let you really flex your C pointer skills.  I don't know if you still suffer memories of the linked list lab in CSC270 or CSC120/150, but this will be much easier!
-
-What I love most about linked lists is that they are *very* amenable to recursion, the way that lists in python are.
-
-1. Start by looking at `linked-list.c`.  Work through the code for `insert` adding your own comments along
-the way.
-
-2. Next, write and test *recursive* function that, given a pointer to a linked list, prints every item in it, like this:
-
-`1->5->7->10->12->NULL `
-
-I have provided starter code.
-
-(if you are struggling with the recursive implementation I will give you the algorithm in english)
-
-Lines needed: approximately 8, most of which just contain `{`s.
-
-3. Finally, write and test a *recursive* function called `insertRecursive()`.  It should take the same arguments as `insert`, but use recursion to insert a new node containing `N` into the proper place in the linked list.
-
-## Submit 
-
-Commit and push to your repo:
-* Update the `README.md` of your personal repo so that it includes this project
-  * you can look at the `README.md` in the class Repo for guidance
-* Your updated `Writeup.md` containing a very bried description of your code
-* Your `linked-list.c`
-
-
-
+##### (Step 3):
+    - The algorithm for a recursive insert is pretty easy too:
+    > We want to insert the integer such that every node before it is less than its value and every node after greater
+    1. If the current list pointer is NULL or the int 'N' is less than the list pointer:
+    - Insert the integer and make it's next value equal to the original value for this list pointer
+    2. Otherwise, make the next value for this list pointer equal to the result of insertRecursive for the next value of this list pointer
+    - Works great.. hurrah!
